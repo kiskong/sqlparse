@@ -19,7 +19,9 @@ class StatementSplitter(object):
         """Set the filter attributes to its default values"""
         self._in_declare = False
         self._is_create = False
+        self._is_case = False
         self._begin_depth = 0
+        
 
         self.consume_ws = False
         self.tokens = []
@@ -58,12 +60,21 @@ class StatementSplitter(object):
                 # FIXME(andi): This makes no sense.
                 return 1
             return 0
-
+        
+        if unified == 'CASE':
+            self._is_case=True;
+            return 0;
+        
         # Should this respect a preceding BEGIN?
         # In CASE ... WHEN ... END this results in a split level -1.
         # Would having multiple CASE WHEN END and a Assignment Operator
         # cause the statement to cut off prematurely?
         if unified == 'END':
+            #In CASE ... WHEN ... END cut off prematurely
+            if self._is_case = True:
+                self._is_case = False;
+                return 0;
+            
             self._begin_depth = max(0, self._begin_depth - 1)
             return -1
 
