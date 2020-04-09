@@ -20,6 +20,7 @@ class StatementSplitter(object):
         self._in_declare = False
         self._is_create = False
         self._is_case = False
+        self._case_level = 0
         self._begin_depth = 0
         
 
@@ -62,7 +63,9 @@ class StatementSplitter(object):
             return 0
         
         if unified == 'CASE':
-            self._is_case=True;
+            if self._is_case == False:
+                self._is_case = True
+            self._case_level +=1
             return 0;
         
         # Should this respect a preceding BEGIN?
@@ -72,7 +75,9 @@ class StatementSplitter(object):
         if unified == 'END':
             #In CASE ... WHEN ... END cut off prematurely
             if self._is_case = True:
-                self._is_case = False;
+                self._case_level =self._case_level - 1
+                if self._case_level == 0 :
+                    self._is_case = False;
                 return 0;
             
             self._begin_depth = max(0, self._begin_depth - 1)
