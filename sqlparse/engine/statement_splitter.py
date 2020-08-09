@@ -74,7 +74,7 @@ class StatementSplitter(object):
         # cause the statement to cut off prematurely?
         if unified == 'END':
             #In CASE ... WHEN ... END cut off prematurely
-            if self._is_case = True:
+            if self._is_case == True:
                 self._case_level =self._case_level - 1
                 if self._case_level == 0 :
                     self._is_case = False;
